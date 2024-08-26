@@ -1,0 +1,110 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_customizable_banner_status" id="input-status" class="form-control">
+                {% if module_customizable_banner_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-title">{{ entry_title }}</label>
+            <div class="col-sm-10">
+                <input type="text" name="module_customizable_banner_title" id="input-title" class="form-control" value="{{ module_customizable_banner_title }}">
+            </div>
+        </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-message">{{ entry_message }}</label>
+            <div class="col-sm-10">
+                <textarea name="module_customizable_banner_message" id="input-message" data-toggle="summernote" class="form-control">{{ module_customizable_banner_message }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="input-product">{{ entry_products }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="product" value="" placeholder="{{ entry_products }}" id="input-product" class="form-control" />
+            <div id="banner-product" class="well well-sm" style="height: 150px; overflow: auto;">
+              {% for module_customizable_banner_product in module_customizable_banner_products %}
+              <div id="banner-product{{ module_customizable_banner_product.product_id }}"><i class="fa fa-minus-circle"></i> {{ module_customizable_banner_product.name }}
+                <input type="hidden" name="module_customizable_banner_product[]" value="{{ module_customizable_banner_product.product_id }}" />
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('input[name=\'product\']').autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['product_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('input[name=\'product\']').val('');
+
+		$('#banner-product' + item['value']).remove();
+
+		$('#banner-product').append('<div id="banner-product' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="module_customizable_banner_product[]" value="' + item['value'] + '" /></div>');
+	}
+});
+
+$('#banner-product').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+//--></script>
+<link href="view/javascript/codemirror/lib/codemirror.css" rel="stylesheet" />
+  <link href="view/javascript/codemirror/theme/monokai.css" rel="stylesheet" />
+  <script type="text/javascript" src="view/javascript/codemirror/lib/codemirror.js"></script> 
+  <script type="text/javascript" src="view/javascript/codemirror/lib/xml.js"></script> 
+  <script type="text/javascript" src="view/javascript/codemirror/lib/formatting.js"></script> 
+  <script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+  <link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
+  <script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script> 
+  <script type="text/javascript" src="view/javascript/summernote/opencart.js"></script>
+{{ footer }}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Customizable Banner Module</name>
+    <code>customizable_banner</code>
+    <version>1.0.0</version>
+    <author>Nutu D and Liviu B.</author>
+    <link>http://www.yourdomain.com</link>
+    <file path="catalog/controller/common/header.php">
+        <operation>
+            <search><![CDATA[return $this->load->view('common/header', $data);]]></search>
+            <add position="before"><![CDATA[
+            if ((isset($this->request->get['route']) && $this->request->get['route'] == 'common/home' ) || !isset($this->request->get['route'])) {
+            $data['customizable_banner'] = $this->load->controller('extension/module/customizable_banner');
+            }    
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/default/template/common/header.twig">
+        <operation>
+            <search position="before"><![CDATA[<nav id="top">]]></search>
+            <add position="before"><![CDATA[{% if customizable_banner %}{{customizable_banner}}{% endif %}]]></add>
+        </operation>
+    </file>
+</modification>
